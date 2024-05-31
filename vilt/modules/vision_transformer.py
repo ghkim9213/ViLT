@@ -905,7 +905,7 @@ def _create_vision_transformer(variant, pretrained=False, distilled=False, **kwa
         representation_size=repr_size,
         **kwargs,
     )
-    model.default_cfg = default_cfg
+    model.pretrained_cfg = default_cfg
 
     if pretrained:
         load_pretrained(

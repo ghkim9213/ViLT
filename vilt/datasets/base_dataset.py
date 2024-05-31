@@ -2,6 +2,7 @@ import random
 import torch
 import io
 import pyarrow as pa
+import pyarrow.parquet as pq
 import os
 
 from PIL import Image
@@ -40,14 +41,7 @@ class BaseDataset(torch.utils.data.Dataset):
         self.data_dir = data_dir
 
         if len(names) != 0:
-            tables = [
-                pa.ipc.RecordBatchFileReader(
-                    pa.memory_map(f"{data_dir}/{name}.arrow", "r")
-                ).read_all()
-                for name in names
-                if os.path.isfile(f"{data_dir}/{name}.arrow")
-            ]
-
+            tables = [pq.read_table(f"{data_dir}/{name}.parquet") for name in names]
             self.table_names = list()
             for i, name in enumerate(names):
                 self.table_names += [name] * len(tables[i])

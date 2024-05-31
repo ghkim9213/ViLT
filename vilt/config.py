@@ -34,9 +34,9 @@ def config():
     image_only = False
 
     # Text Setting
-    vqav2_label_size = 3129
+    label_size = 3129
     max_text_len = 40
-    tokenizer = "bert-base-uncased"
+    vocab_file = "clevr_vocab.txt"
     vocab_size = 30522
     whole_word_masking = False
     mlm_prob = 0.15
@@ -90,11 +90,36 @@ def env_dandelin():
     num_nodes = 1
 
 
+@ex.named_config
+def task_clevr():
+    exp_name = "vilt_clevr"
+    datasets = ["clevr"]
+    loss_names = _loss_names({"itm": 1, "mlm": 1})
+    batch_size = 4096
+
+    max_image_len = 200
+    
+    label_size = 28
+    max_text_len = 45
+    vocab_file = "/data1/geonhyeong/CLEVR_v1.0/clevr_vocab.txt"
+    vocab_size = 82
+    whole_word_masking = True
+    mlm_prob = 0.15
+    draw_false_text = 0
+
+    # env
+    data_root = "/data1/geonhyeong/CLEVR_v1.0"
+    log_dir = "/data1/geonhyeong/vilt/result"
+    num_gpus = 1
+    num_nodes = 1
+    per_gpu_batchsize = 128
+
+
 # Named configs for "task" which define datasets, loss_names and desired batch_size, warmup_steps, epochs, and exp_name
 @ex.named_config
 def task_mlm_itm():
     exp_name = "mlm_itm"
-    datasets = ["coco", "vg", "sbu", "gcc"]
+    datasets = ["clevr"] # , "clevr_xai_lang"]
     loss_names = _loss_names({"itm": 1, "mlm": 1})
     batch_size = 4096
     max_epoch = 10
@@ -104,7 +129,8 @@ def task_mlm_itm():
 @ex.named_config
 def task_mlm_itm_randaug():
     exp_name = "mlm_itm_randaug"
-    datasets = ["coco", "vg", "sbu", "gcc"]
+    # datasets = ["coco", "vg", "sbu", "gcc"]
+    datasets = ["clevr"] #, "clevr_xai_lang"]
     train_transform_keys = ["pixelbert_randaug"]
     loss_names = _loss_names({"itm": 1, "mlm": 1})
     batch_size = 4096
@@ -115,7 +141,8 @@ def task_mlm_itm_randaug():
 @ex.named_config
 def task_mlm_itm_mpp():
     exp_name = "mlm_itm_mpp"
-    datasets = ["coco", "vg", "sbu", "gcc"]
+    # datasets = ["coco", "vg", "sbu", "gcc"]
+    datasets = ["clevr"] #, "clevr_xai_lang"]
     loss_names = _loss_names({"itm": 1, "mlm": 1, "mpp": 1})
     batch_size = 4096
     max_epoch = 10

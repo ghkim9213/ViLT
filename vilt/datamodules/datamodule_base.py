@@ -21,6 +21,14 @@ def get_pretrained_tokenizer(from_pretrained):
     )
 
 
+def build_tokenizer(vocab_file, model_max_length):
+    return BertTokenizer(
+        vocab_file,
+        do_lower_case=True,
+        model_max_length=model_max_length,
+    )
+
+
 class BaseDataModule(LightningDataModule):
     def __init__(self, _config):
         super().__init__()
@@ -49,8 +57,11 @@ class BaseDataModule(LightningDataModule):
             else _config["val_transform_keys"]
         )
 
-        tokenizer = _config["tokenizer"]
-        self.tokenizer = get_pretrained_tokenizer(tokenizer)
+        vocab_file = _config["vocab_file"]
+        self.tokenizer = build_tokenizer(
+            vocab_file,
+            model_max_length=_config["max_text_len"]
+        )
         self.vocab_size = self.tokenizer.vocab_size
 
         collator = (
